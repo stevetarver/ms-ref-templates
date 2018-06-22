@@ -62,16 +62,18 @@ That will also show up in:
 
 To support uniform use, we'll introduce the following conventions
 
-* **DNS domain**: The DNS Top Level Domain plus the domain name. E.g. 'makara.com'
-* **DNS host**: The DNS Host portion of the DNS name; everything that precedes the DNS TLD needed to reach the API ingress endpoint. E.g. 'api'. The DNS host + domain yield 'api.makara.com'.
+* **Prod DNS domain**: The production DNS Top Level Domain plus the domain name. E.g. 'makara.com'
+* **Prod DNS host**: The production DNS Host portion of the DNS name; everything that precedes the dns_domain needed to reach the API ingress endpoint. E.g. 'api'. The DNS host + domain yield 'api.makara.com'.
+* **Ops DNS domain**: An internal TLD and domain name that are the suffix for the ops endpoint. E.g. 'makara.dom'. The GitHub repo name is prefixed to form an ops endpoint providing greater access than the production endpoint; for example, access to health and metrics.
 * **Business domain**: The business functional or logical domain. E.g. 'finance', 'hr', 'network'.
 * **Business sub-domain**: A further clarification of the business domain to provide granularity to reduce growing service counts in any one business domain. E.g. The 'finance' domain could have 'payroll' and 'reporting' sub-domains.
 
 Using these four pieces of information, we can construct:
 
-* **DNS names**: {dns_host}.{dns_domain}: 'api.makara.com'
+* **Prod DNS name**: {prod_dns_host}.{prod_dns_domain}: 'api.makara.com'
+* **Ops DNS name**: {github_repo_name}.{ops_dns_domain}: 'fin-payroll.makara.dom'
 * **ReST URI paths**: {business_domain}/{business_subdomain}/{resource}: '/finance/payroll/employees'
-* **Package names**: {dns_domain_reversed}.{business_domain}.business_subdomain}: 'com.makara.finance.payroll'
+* **Root package name**: {dns_domain_reversed}.{business_domain}.{business_subdomain}: 'com.makara.finance.payroll'
 
 ## Example run
 
