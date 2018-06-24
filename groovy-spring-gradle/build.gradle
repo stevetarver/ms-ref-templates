@@ -1,0 +1,86 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.9.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'codenarc'
+
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+def logbackVersion = '1.2.3'
+def jacksonVersion = '2.9.3'
+def prometheusVersion = '0.1.0'
+
+dependencies {
+    compile('org.codehaus.groovy:groovy-all:2.4.12')
+
+    // Begin Spring
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-aop') // used in logging telemetry
+    compile('org.springframework.hateoas:spring-hateoas')
+    // End Spring
+
+    compile('commons-beanutils:commons-beanutils:1.9.3') // used by JsonApiResponse
+
+    // Begin Logging
+    compile('net.logstash.logback:logstash-logback-encoder:4.11')
+    compile("ch.qos.logback:logback-classic:${logbackVersion}")
+    compile("ch.qos.logback:logback-core:${logbackVersion}")
+    //     Ensure this only exists once on your classpath
+    compile('org.slf4j:slf4j-api:1.7.25')
+    compile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+    compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    // End logging
+
+    // Begin Monitoring
+    compile("io.prometheus:simpleclient_spring_boot:${prometheusVersion}")
+    compile("io.prometheus:simpleclient_hotspot:${prometheusVersion}")
+    compile("io.prometheus:simpleclient_servlet:${prometheusVersion}")
+    // End Monitoring
+
+    // Begin Test
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
+    testCompile('junit:junit')
+    // End Test
+}
+
+codenarcMain {
+    configFile = rootProject.file("jenkins/codenarc/ruleset-main.groovy")
+    ignoreFailures = true
+
+    maxPriority1Violations = 0
+    maxPriority2Violations = 10
+    maxPriority3Violations = 20
+}
+
+codenarcTest {
+    configFile = rootProject.file("jenkins/codenarc/ruleset-test.groovy")
+    ignoreFailures = true
+
+    maxPriority1Violations = 0
+    maxPriority2Violations = 10
+    maxPriority3Violations = 20
+}
+
+// Allow system properties to be passed to SpringBoot app - for colored logging, etc.
+bootRun {
+    systemProperties(System.properties)
+}

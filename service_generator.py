@@ -334,16 +334,16 @@ def initialize() -> Optional[Config]:
     Options must be specified as --member=value
     """
     if len(sys.argv) > 1:
-        # all args must start with --
         args = sys.argv[1:]
         if len(args) != 6:
             Term.error(f"All args must be specified. You provided the wrong arg count: '{args}'")
             exit(1)
+
         s = set([x[:2] for x in args])
         if len(s) != 1 or '--' not in s:
             Term.error(f"All arg keys must have a '--' prefix: --bus_domain=finance. You provided '{args}'")
             exit(1)
-        # all args must be kv pairs delimited by =
+
         s = set('=' in x for x in args)
         if len(s) != 1 or True not in s:
             Term.error(f"All args must be '=' delimited kv pairs: --bus_domain=finance. You provided '{args}'")
