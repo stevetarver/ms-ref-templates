@@ -1,0 +1,14 @@
+**/*.class
+**/target/*-client.jar
+**/target/*.jar.original
+/doc/
+/helm/
+/integration-test/
+/jenkins/
+/src/
+/target/classes/
+/target/generated-sources/
+/target/generated-test-sources/
+/target/maven-archiver/
+/target/maven-status/
+/target/test-classes/

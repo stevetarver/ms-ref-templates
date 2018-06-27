@@ -76,22 +76,23 @@ class Config:
 
     def __str__(self) -> str:
         return f"""
-    template:            {self._template}
-    language:            {self.language()}
+    template:                 {self._template}
+    language:                 {self.language()}
+     
+    template_target_dir:      {     self.template_target_dir}
+    github_repo_name:         {self.github_repo_name}
+    ops_dns_domain:           {self.ops_dns_domain}
+    ops_dns_name:             {self.ops_dns_name()}
 
-    template_target_dir: {self.template_target_dir}
-    github_repo_name:    {self.github_repo_name}
-    ops_dns_domain:      {self.ops_dns_domain}
-    ops_dns_name:        {self.ops_dns_name()}
-
-    prod_dns_domain:     {self.prod_dns_domain}
-    prod_dns_host:       {self.prod_dns_host}
-    prod_dns_name:       {self.prod_dns_name()}
-    bus_domain:          {self.bus_domain}
-    bus_subdomain:       {self.bus_subdomain}
-    root_package:        {self.root_package()}
-    uri:                 {self.uri()}
-
+    prod_dns_domain:          {self.prod_dns_domain}
+    reversed_prod_dns_domain: {self.reversed_prod_dns_domain()}
+    prod_dns_host:            {self.prod_dns_host}
+    prod_dns_name:            {self.prod_dns_name()}
+    bus_domain:               {self.bus_domain}
+    bus_subdomain:            {self.bus_subdomain}
+    root_package:             {self.root_package()}
+    uri:                      {self.uri()}
+     
     template_source_dir: {self.template_source_dir}
     """
 
@@ -122,12 +123,15 @@ class Config:
 
     def mvn_group(self) -> str:
         """ Reversed prod_dns_name + bus_domain. e.g. com.makara.finance """
-        return '.'.join(('.'.join(reversed(self.prod_dns_domain.split('.'))),
-                         self.bus_domain))
+        return '.'.join((self.reversed_prod_dns_domain(), self.bus_domain))
 
     def ops_dns_name(self) -> str:
         """ e.g. fin-payroll.makara.dom """
         return f"{self.github_repo_name}.{self.ops_dns_domain}"
+
+    def reversed_prod_dns_domain(self) -> str:
+        """ Reversed prod_dns_name. e.g. com.makara """
+        return ('.'.join(reversed(self.prod_dns_domain.split('.'))))
 
     def root_package(self) -> str:
         """ Reversed prod_dns_name + bus_domain + bus_subdomain. e.g. com.makara.finance.payroll """
@@ -367,6 +371,7 @@ def replace_keywords(config: Config) -> None:
     """ Customize the template using user variables """
     params = {
         '~~GITHUB_REPO_NAME~~': config.github_repo_name,
+        '~~REV_PROD_DNS_NAME~~': config.reversed_prod_dns_domain(),
         '~~ROOT_PACKAGE~~': config.root_package(),
         '~~MVN_GROUP~~': config.mvn_group(),
         '~~ROOT_URI~~': config.uri().replace('/', '\\/'),
